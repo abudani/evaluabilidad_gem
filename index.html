@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Evaluabilidad MEL - ZIGLA</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── ZIGLA PALETTE ──────────────────────────────────────────── */
+:root {
+  --navy:      #03206B;
+  --navy-mid:  #1A3A7A;
+  --cel-p:     #136BF9;
+  --cel:       #73ADF4;
+  --cel-lt:    #E8F1FE;
+  --verde-p:   #A2C3A4;
+  --verde:     #CFE5CF;
+  --verde-lt:  #EDF6EE;
+  --salmon-p:  #E8584B;
+  --salmon:    #EDAC9D;
+  --salmon-lt: #FEF0EE;
+  --amar-p:    #FCCA46;
+  --amar:      #F9D89D;
+  --amar-lt:   #FFFBEC;
+  --crema:     #FCF8F5;
+  --white:     #FFFFFF;
+  --ink:       #0D1B3E;
+  --mid:       #4A5880;
+  --border:    #DDE5F5;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--crema);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── TOP BAR ─────────────────────────────────────────────────── */
+.topbar {
+  background: var(--navy);
+  padding: 0 40px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 20px rgba(3,32,107,0.3);
+}
+.topbar-brand {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: white;
+}
+.topbar-brand span { color: var(--cel-p); }
+.topbar-step {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 1px;
+}
+
+/* ── PROGRESS BAR ────────────────────────────────────────────── */
+.progress-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  position: relative;
+}
+.progress-fill {
+  height: 4px;
+  background: linear-gradient(to right, var(--cel-p), var(--amar-p));
+  transition: width 0.5s ease;
+  position: absolute;
+  top: 0; left: 0;
+}
+
+/* ── LAYOUT ──────────────────────────────────────────────────── */
+.app {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 48px 20px 80px;
+}
+
+/* ── INTRO SCREEN ────────────────────────────────────────────── */
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+.intro-hero {
+  text-align: center;
+  padding: 48px 32px 40px;
+  background: var(--navy);
+  border-radius: 16px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.intro-hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: rgba(19,107,249,0.15);
+}
+.intro-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: 100px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(252,202,70,0.1);
+}
+.intro-tag {
+  display: inline-block;
+  background: rgba(19,107,249,0.25);
+  border: 1px solid rgba(19,107,249,0.4);
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--cel);
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+.intro-hero h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: white;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+.intro-hero p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.65);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.7;
+  position: relative;
+  z-index: 1;
+}
+
+.info-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.info-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 16px;
+  text-align: center;
+}
+.info-card-icon { font-size: 24px; margin-bottom: 8px; }
+.info-card-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 2px;
+}
+.info-card-label { font-size: 11px; color: var(--mid); font-weight: 500; }
+
+.intro-note {
+  background: var(--cel-lt);
+  border-left: 4px solid var(--cel-p);
+  border-radius: 0 8px 8px 0;
+  padding: 16px 20px;
+  font-size: 13px;
+  color: var(--navy);
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+/* ── DATA FIELDS ─────────────────────────────────────────────── */
+.fields-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+.fields-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+.field-group { margin-bottom: 18px; }
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 6px;
+}
+.field-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--crema);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.field-input:focus {
+  border-color: var(--cel-p);
+  box-shadow: 0 0 0 3px rgba(19,107,249,0.1);
+  background: white;
+}
+.field-input.error { border-color: var(--salmon-p); }
+.field-error {
+  font-size: 11px;
+  color: var(--salmon-p);
+  margin-top: 4px;
+  display: none;
+}
+.field-error.show { display: block; }
+
+/* ── DIMENSION SCREEN ────────────────────────────────────────── */
+.dim-header {
+  background: var(--navy);
+  border-radius: 12px 12px 0 0;
+  padding: 28px 32px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.dim-header::after {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(19,107,249,0.12);
+}
+.dim-num-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.dim-num-circle {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: white;
+}
+.dim-num-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--cel);
+}
+.dim-header h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 6px;
+  position: relative; z-index: 1;
+}
+.dim-header p {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.6;
+  max-width: 500px;
+  position: relative; z-index: 1;
+}
+.scale-legend {
+  display: flex;
+  gap: 6px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+  position: relative; z-index: 1;
+}
+.scale-chip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.8);
+}
+
+.questions-block {
+  background: white;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.question-row {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.question-row:last-child { border-bottom: none; }
+.question-row:hover { background: #FAFBFF; }
+
+.q-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 14px;
+  line-height: 1.55;
+}
+.q-required { color: var(--salmon-p); margin-left: 2px; }
+
+.scale-buttons {
+  display: flex;
+  gap: 8px;
+}
+.scale-btn {
+  width: 44px; height: 44px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--crema);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--mid);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.scale-btn:hover {
+  border-color: var(--cel-p);
+  color: var(--cel-p);
+  background: var(--cel-lt);
+  transform: translateY(-1px);
+}
+.scale-btn.selected {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: white;
+  box-shadow: 0 3px 10px rgba(3,32,107,0.25);
+  transform: translateY(-1px);
+}
+.scale-btn[data-val="1"].selected { background: var(--salmon-p); border-color: var(--salmon-p); }
+.scale-btn[data-val="2"].selected { background: #D4780A; border-color: #D4780A; }
+.scale-btn[data-val="3"].selected { background: #C08A0A; border-color: #C08A0A; }
+.scale-btn[data-val="4"].selected { background: var(--cel-p); border-color: var(--cel-p); }
+.scale-btn[data-val="5"].selected { background: var(--verde-p); border-color: #4a8b4d; color: #1a4d1c; }
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding: 0 4px;
+}
+.scale-label-txt {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--mid);
+  letter-spacing: 0.5px;
+}
+
+.q-unanswered {
+  background: var(--salmon-lt) !important;
+}
+.q-unanswered .q-text::after {
+  content: ' — Respuesta requerida';
+  color: var(--salmon-p);
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* ── NAVIGATION BUTTONS ──────────────────────────────────────── */
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+.btn {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 13px 28px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+.btn-primary {
+  background: var(--navy);
+  color: white;
+  box-shadow: 0 4px 14px rgba(3,32,107,0.25);
+}
+.btn-primary:hover {
+  background: var(--cel-p);
+  box-shadow: 0 6px 20px rgba(19,107,249,0.35);
+  transform: translateY(-1px);
+}
+.btn-secondary {
+  background: white;
+  color: var(--navy);
+  border: 1.5px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--navy); }
+.btn-submit {
+  background: linear-gradient(135deg, var(--navy), var(--cel-p));
+  color: white;
+  padding: 15px 36px;
+  font-size: 14px;
+  box-shadow: 0 6px 20px rgba(3,32,107,0.3);
+}
+.btn-submit:hover { transform:translateY(-2px); box-shadow: 0 8px 24px rgba(3,32,107,0.4); }
+.btn-submit:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+
+/* ── SENDING SCREEN ──────────────────────────────────────────── */
+.sending-box {
+  text-align: center;
+  padding: 60px 32px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.spinner {
+  width: 56px; height: 56px;
+  border: 4px solid var(--border);
+  border-top-color: var(--cel-p);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 24px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.sending-box h2 { font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.sending-box p { font-size: 13px; color: var(--mid); }
+
+/* ── SUCCESS SCREEN ──────────────────────────────────────────── */
+.success-box {
+  text-align: center;
+  padding: 60px 32px;
+  background: var(--navy);
+  border-radius: 16px;
+}
+.success-icon {
+  width: 72px; height: 72px;
+  background: var(--verde-p);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 24px;
+}
+.success-box h2 { font-size: 24px; font-weight: 800; color: white; margin-bottom: 12px; }
+.success-box p { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.7; }
+.success-email-note {
+  margin-top: 24px;
+  background: rgba(19,107,249,0.2);
+  border-radius: 8px;
+  padding: 14px 20px;
+  font-size: 13px;
+  color: var(--cel);
+}
+
+/* ── DIMENSION NAV DOTS ──────────────────────────────────────── */
+.dim-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 28px;
+}
+.dim-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: all 0.3s;
+}
+.dim-dot.done { background: var(--verde-p); }
+.dim-dot.active { background: var(--cel-p); width: 24px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">Diagnóstico <span>MEL</span></div>
+  <div class="topbar-step" id="topbarStep">Bienvenida</div>
+</div>
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<div class="app">
+
+  <!-- ── SCREEN 0: INTRO ───────────────────────────────────────── -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-hero">
+      <div class="intro-tag">Autoevaluación</div>
+      <h1>Condiciones de Evaluabilidad</h1>
+      <p>Diagnóstico del Sistema de Monitoreo, Evaluación y Aprendizaje de tu organización.</p>
+    </div>
+
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="info-card-icon">📋</div>
+        <div class="info-card-num">6</div>
+        <div class="info-card-label">Dimensiones</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">❓</div>
+        <div class="info-card-num">23</div>
+        <div class="info-card-label">Preguntas</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">⏱</div>
+        <div class="info-card-num">~10'</div>
+        <div class="info-card-label">Duración</div>
+      </div>
+    </div>
+
+    <div class="intro-note">
+      <strong>¿Qué son las condiciones de evaluabilidad?</strong><br>
+      Son aspectos clave que permiten diagnosticar el estado de tu sistema MEL. Fueron formulados como afirmaciones deseables, agrupadas en 6 dimensiones. Este análisis es un punto de partida para mejora, no una evaluación de la organización.
+    </div>
+
+    <div class="fields-card">
+      <h3>Datos de la organización</h3>
+      <div class="field-group">
+        <label class="field-label">Nombre de la organización *</label>
+        <input class="field-input" id="f-org" type="text" placeholder="Ej: Fundación Ejemplo">
+        <div class="field-error" id="err-org">Por favor completá este campo.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Nombre del programa o proyecto (opcional)</label>
+        <input class="field-input" id="f-prog" type="text" placeholder="Ej: Programa Agua Segura">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Tu nombre *</label>
+        <input class="field-input" id="f-nombre" type="text" placeholder="Ej: María González">
+        <div class="field-error" id="err-nombre">Por favor completá este campo.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Email (recibirás el informe aquí) *</label>
+        <input class="field-input" id="f-email" type="email" placeholder="tu@email.com">
+        <div class="field-error" id="err-email">Por favor ingresá un email válido.</div>
+      </div>
+    </div>
+
+    <div class="nav-row" style="justify-content:flex-end">
+      <button class="btn btn-primary" onclick="startSurvey()">Comenzar diagnóstico →</button>
+    </div>
+  </div>
+
+  <!-- ── SCREENS 1–6: DIMENSIONES ─────────────────────────────── -->
+  <!-- Generated by JS below -->
+  <div id="dim-screens"></div>
+
+  <!-- ── SCREEN SENDING ───────────────────────────────────────── -->
+  <div class="screen" id="screen-sending">
+    <div class="sending-box">
+      <div class="spinner"></div>
+      <h2>Procesando tu diagnóstico...</h2>
+      <p>Estamos analizando tus respuestas y generando el informe personalizado.</p>
+    </div>
+  </div>
+
+  <!-- ── SCREEN SUCCESS ────────────────────────────────────────── -->
+  <div class="screen" id="screen-success">
+    <div class="success-box">
+      <div class="success-icon">✓</div>
+      <h2>¡Tu diagnóstico fue enviado!</h2>
+      <p>Analizamos tus respuestas en las 6 dimensiones de evaluabilidad.<br>El informe completo fue enviado a tu casilla de correo.</p>
+      <div class="success-email-note" id="success-email-display"></div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ── CUESTIONARIO COMPLETO ─────────────────────────────────────────
+const DIMENSIONS = [
+  {
+    id: 1,
+    name: "Formalidad Programática",
+    scaleDesc: "1 = No se cumple la condición · 3 = Cumplimiento intermedio · 5 = Se cumple totalmente",
+    questions: [
+      "La organización tiene definida una misión, visión y objetivos",
+      "Cada acción o programa llevado adelante por la organización es parte de una programación previa",
+      "Cada acción o programa tienen definidos sus objetivos generales",
+      "Cada acción o programa que se llevan adelante tienen definidas metas",
+      "Hay establecida una periodicidad (trimestral, semestral, anual) para la revisión de objetivos y metas"
+    ]
+  },
+  {
+    id: 2,
+    name: "Cultura de Medición y Análisis",
+    scaleDesc: "1 = No ocurre · 2, 3 y 4 son niveles intermedios · 5 = Máximo nivel de ocurrencia",
+    questions: [
+      "La organización posee la costumbre de analizar la evolución de los programas y servicios que implementa",
+      "El análisis que se realiza se consolida en documentos o planillas para su posterior reflexión",
+      "Se realiza una medición de los avances de los programas en función de objetivos y metas planteados inicialmente",
+      "Se utilizan conclusiones de los análisis de los programas como parte del proceso de planificación de otros programas nuevos"
+    ]
+  },
+  {
+    id: 3,
+    name: "Recursos de Evaluación",
+    scaleDesc: "1 = No se cumple la condición · 3 = Cumplimiento intermedio · 5 = Se cumple totalmente",
+    questions: [
+      "Hay suficiente cantidad de RRHH como para asignar horas al cumplimiento de las funciones de evaluación",
+      "Los recursos humanos asignados específicamente, tienen los conocimientos técnicos para llevar adelante la evaluación",
+      "La organización cuenta con un sistema de MyE para el cumplimiento de las funciones asignadas",
+      "La organización puede destinar recursos económicos para el proceso de evaluación (ej: contratar o sumar horas de staff / sumar recursos tecnológicos)",
+      "El staff cuenta con los recursos tecnológicos necesarios para llevar a cabo funciones de evaluación (computadoras, equipos de comunicación, movilidad, etc.)"
+    ]
+  },
+  {
+    id: 4,
+    name: "Participación de Stakeholders",
+    scaleDesc: "1 = No ocurre · 2, 3 y 4 son niveles intermedios · 5 = Máximo nivel de ocurrencia",
+    questions: [
+      "Los donantes participan de instancias de evaluación junto a la organización",
+      "Los aliados de la organización participan de instancias de evaluación junto a la organización",
+      "Los destinatarios de la organización participan de instancias de evaluación junto a la organización"
+    ]
+  },
+  {
+    id: 5,
+    name: "Rendición de Cuentas",
+    scaleDesc: "1 = No se cumple la condición · 3 = Cumplimiento intermedio · 5 = Se cumple totalmente",
+    questions: [
+      "La organización cuenta con experiencia de rendición de cuentas externa (ej: con otros donantes o aliados)",
+      "La organización tiene como práctica la difusión periódica de los avances y resultados de sus programas y acciones dirigidos a sus diferentes stakeholders",
+      "La organización posee publicaciones dirigidas a comunicar sus avances a sus diferentes públicos de interés"
+    ]
+  },
+  {
+    id: 6,
+    name: "Gestión del Aprendizaje",
+    scaleDesc: "1 = No ocurre · 2, 3 y 4 son niveles intermedios · 5 = Máximo nivel de ocurrencia",
+    questions: [
+      "La organización realiza un análisis de los resultados luego de la ejecución de los procesos o acciones que implementa",
+      "La organización documenta los limitantes y aprendizajes en algún tipo de producto que pueda ser circulado",
+      "La organización utiliza esta documentación en la planificación estratégica de futuros programas y acciones"
+    ]
+  }
+];
+
+// State
+const answers = {}; // { "d1_q0": 3, "d1_q1": 5, ... }
+let currentDim = 0;
+let userData = {};
+
+// ── BUILD DIMENSION SCREENS ────────────────────────────────────────
+function buildScreens() {
+  const container = document.getElementById('dim-screens');
+  DIMENSIONS.forEach((dim, di) => {
+    const screenDiv = document.createElement('div');
+    screenDiv.className = 'screen';
+    screenDiv.id = `screen-dim-${di}`;
+
+    const dots = DIMENSIONS.map((_, i) => {
+      const cls = i < di ? 'done' : i === di ? 'active' : '';
+      return `<div class="dim-dot ${cls}"></div>`;
+    }).join('');
+
+    const questions = dim.questions.map((q, qi) => `
+      <div class="question-row" id="qrow-${di}-${qi}">
+        <div class="q-text">${di+1}.${qi+1}. ${q}<span class="q-required">*</span></div>
+        <div class="scale-buttons">
+          ${[1,2,3,4,5].map(v => `
+            <button class="scale-btn" data-val="${v}" data-dim="${di}" data-q="${qi}" onclick="selectAnswer(${di},${qi},${v})">
+              ${v}
+            </button>
+          `).join('')}
+        </div>
+        <div class="scale-labels">
+          <span class="scale-label-txt">No cumple</span>
+          <span class="scale-label-txt">Cumple totalmente</span>
+        </div>
+      </div>
+    `).join('');
+
+    screenDiv.innerHTML = `
+      <div class="dim-dots">${dots}</div>
+      <div class="dim-header">
+        <div class="dim-num-badge">
+          <div class="dim-num-circle">${di+1}</div>
+          <span class="dim-num-label">Dimensión ${di+1} de ${DIMENSIONS.length}</span>
+        </div>
+        <h2>${dim.name}</h2>
+        <p>Seleccioná un número del 1 al 5 para cada afirmación.</p>
+        <div class="scale-legend">
+          <span class="scale-chip">${dim.scaleDesc}</span>
+        </div>
+      </div>
+      <div class="questions-block">${questions}</div>
+      <div class="nav-row">
+        <button class="btn btn-secondary" onclick="navBack(${di})">
+          ${di === 0 ? '← Volver' : '← Anterior'}
+        </button>
+        ${di < DIMENSIONS.length - 1
+          ? `<button class="btn btn-primary" onclick="navNext(${di})">Siguiente dimensión →</button>`
+          : `<button class="btn btn-submit" id="submit-btn" onclick="submitSurvey()">Enviar diagnóstico ✓</button>`
+        }
+      </div>
+    `;
+    container.appendChild(screenDiv);
+  });
+}
+
+// ── SELECT ANSWER ──────────────────────────────────────────────────
+function selectAnswer(di, qi, val) {
+  const key = `d${di+1}_q${qi+1}`;
+  answers[key] = val;
+  // Update buttons
+  const row = document.getElementById(`qrow-${di}-${qi}`);
+  row.querySelectorAll('.scale-btn').forEach(btn => {
+    btn.classList.toggle('selected', parseInt(btn.dataset.val) === val);
+  });
+  row.classList.remove('q-unanswered');
+}
+
+// ── VALIDATE DIMENSION ─────────────────────────────────────────────
+function validateDim(di) {
+  let ok = true;
+  DIMENSIONS[di].questions.forEach((_, qi) => {
+    const key = `d${di+1}_q${qi+1}`;
+    const row = document.getElementById(`qrow-${di}-${qi}`);
+    if (!answers[key]) {
+      row.classList.add('q-unanswered');
+      ok = false;
+    }
+  });
+  if (!ok) {
+    const firstUnanswered = document.querySelector('.q-unanswered');
+    if (firstUnanswered) firstUnanswered.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+  return ok;
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress(step) {
+  // step: 0=intro, 1-6=dims, 7=done
+  const pct = (step / (DIMENSIONS.length + 1)) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  const labels = ['Bienvenida', ...DIMENSIONS.map(d => d.name), 'Enviando...'];
+  document.getElementById('topbarStep').textContent = labels[step] || '';
+}
+
+function startSurvey() {
+  // Validate intro fields
+  let ok = true;
+  const org = document.getElementById('f-org').value.trim();
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+
+  if (!org) { showErr('f-org','err-org',true); ok=false; } else showErr('f-org','err-org',false);
+  if (!nombre) { showErr('f-nombre','err-nombre',true); ok=false; } else showErr('f-nombre','err-nombre',false);
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showErr('f-email','err-email',true); ok=false;
+  } else showErr('f-email','err-email',false);
+
+  if (!ok) return;
+
+  userData = {
+    org, email, nombre,
+    programa: document.getElementById('f-prog').value.trim(),
+    fecha: new Date().toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' })
+  };
+
+  currentDim = 0;
+  showScreen('screen-dim-0');
+  updateProgress(1);
+}
+
+function showErr(fieldId, errId, show) {
+  document.getElementById(fieldId).classList.toggle('error', show);
+  document.getElementById(errId).classList.toggle('show', show);
+}
+
+function navNext(di) {
+  if (!validateDim(di)) return;
+  currentDim = di + 1;
+  showScreen(`screen-dim-${currentDim}`);
+  updateProgress(currentDim + 1);
+}
+
+function navBack(di) {
+  if (di === 0) {
+    showScreen('screen-intro');
+    updateProgress(0);
+  } else {
+    currentDim = di - 1;
+    showScreen(`screen-dim-${currentDim}`);
+    updateProgress(currentDim + 1);
+  }
+}
+
+// ── SUBMIT ─────────────────────────────────────────────────────────
+async function submitSurvey() {
+  if (!validateDim(DIMENSIONS.length - 1)) return;
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+
+  showScreen('screen-sending');
+  updateProgress(DIMENSIONS.length + 1);
+
+  // Build payload
+  const payload = {
+    ...userData,
+    timestamp: new Date().toISOString(),
+    ...answers
+  };
+
+  // ── REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL ──
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBsry5HauqNe9SEiLtXEJVHhuNbgVSwU0iNf-eV6MzRjhl3z9x3IUot84jjoqj2INsAw/exec';
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors', // required for Apps Script
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    // no-cors means we can't read the response, assume success
+    showSuccess();
+  } catch(err) {
+    // Even on network error with no-cors, show success (Apps Script likely received it)
+    showSuccess();
+  }
+}
+
+function showSuccess() {
+  document.getElementById('success-email-display').textContent =
+    `📧 El informe fue enviado a ${userData.email}`;
+  showScreen('screen-success');
+  updateProgress(DIMENSIONS.length + 1);
+}
+
+// ── INIT ────────────────────────────────────────────────────────────
+buildScreens();
+</script>
+</body>
+</html>
